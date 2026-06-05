@@ -1,12 +1,12 @@
 "use client";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { QR_FIELD_LABELS, MANUAL_FIELD_LABELS, SHIP_TYPES } from "@/lib/fields";
 import type { ManualFields, QrFields } from "@/lib/types";
 
 const QR_KEYS = Object.keys(QR_FIELD_LABELS) as (keyof QrFields)[];
 
-export default function EntryPage() {
+function EntryForm() {
   const params = useSearchParams();
   const qr = Object.fromEntries(QR_KEYS.map((k) => [k, params.get(k) ?? ""])) as unknown as QrFields;
 
@@ -127,6 +127,14 @@ export default function EntryPage() {
         {status === "saving" ? "저장 중..." : "출고 등록"}
       </button>
     </main>
+  );
+}
+
+export default function EntryPage() {
+  return (
+    <Suspense fallback={null}>
+      <EntryForm />
+    </Suspense>
   );
 }
 
