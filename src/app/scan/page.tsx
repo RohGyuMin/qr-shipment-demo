@@ -20,7 +20,7 @@ export default function ScanPage() {
           try {
             const fields = decodeQr(text);
             scanner.stop().catch(() => {});
-            const q = new URLSearchParams(fields as Record<string, string>).toString();
+            const q = new URLSearchParams(fields as unknown as Record<string, string>).toString();
             router.push(`/entry?${q}`);
           } catch {
             setError("QR 인식 실패 — 다시 스캔하세요.");
