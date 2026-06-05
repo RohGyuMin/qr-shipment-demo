@@ -26,4 +26,10 @@ describe("validateShipment", () => {
   it("flags non-positive shipQtyRol", () => {
     expect(validateShipment({ ...base, shipQtyRol: 0 })).toContain("shipQtyRol");
   });
+  it("does not throw when claimDetail is missing while hasClaim is true", () => {
+    const malformed = { ...base, hasClaim: true } as Record<string, unknown>;
+    delete malformed.claimDetail;
+    expect(() => validateShipment(malformed as never)).not.toThrow();
+    expect(validateShipment(malformed as never)).toContain("claimDetail");
+  });
 });

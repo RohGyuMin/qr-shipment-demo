@@ -13,6 +13,6 @@ export function validateShipment(input: ShipmentInput): string[] {
   }
   if (!(input.shipQtyRol > 0)) errors.push("shipQtyRol");
   if (!(input.palletCount > 0)) errors.push("palletCount");
-  if (input.hasClaim && !input.claimDetail.trim()) errors.push("claimDetail");
+  if (input.hasClaim && !String(input.claimDetail ?? "").trim()) errors.push("claimDetail");
   return errors;
 }
