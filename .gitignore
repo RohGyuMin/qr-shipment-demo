@@ -4,3 +4,5 @@ node_modules
 *.tsbuildinfo
 .vercel
 next-env.d.ts
+out
+.firebase

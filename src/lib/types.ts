@@ -29,6 +29,6 @@ export interface ManualFields {
 export type ShipmentInput = QrFields & ManualFields;
 
 export interface Shipment extends ShipmentInput {
-  id: number;
+  id: string;
   createdAt: string;
 }

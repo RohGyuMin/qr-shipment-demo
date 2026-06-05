@@ -2,6 +2,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { shipmentsToWorkbookBuffer } from "@/lib/excel";
 import { QR_FIELD_LABELS, MANUAL_FIELD_LABELS } from "@/lib/fields";
+import { subscribeShipments } from "@/lib/shipments";
 import type { Shipment } from "@/lib/types";
 
 export default function Dashboard() {
@@ -11,11 +12,8 @@ export default function Dashboard() {
   const [item, setItem] = useState("");
 
   useEffect(() => {
-    const load = () =>
-      fetch("/api/shipments").then((r) => r.json()).then((d) => setData(d.shipments ?? []));
-    load();
-    const id = setInterval(load, 5000);
-    return () => clearInterval(id);
+    const unsubscribe = subscribeShipments(setData);
+    return () => unsubscribe();
   }, []);
 
   const items = useMemo(() => Array.from(new Set(data.map((d) => d.item))), [data]);
@@ -71,7 +69,7 @@ export default function Dashboard() {
 
       <div className="mb-3 text-sm text-slate-600">
         총 <b>{filtered.length}</b>건 · 출고량 합계 <b>{totalQty.toFixed(1)}</b> ROL
-        <span className="ml-2 text-slate-400">(5초마다 자동 갱신)</span>
+        <span className="ml-2 text-slate-400">(실시간 자동 갱신)</span>
       </div>
 
       <div className="overflow-x-auto rounded-lg border bg-white">

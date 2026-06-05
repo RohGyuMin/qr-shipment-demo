@@ -2,6 +2,8 @@
 import { Suspense, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { QR_FIELD_LABELS, MANUAL_FIELD_LABELS, SHIP_TYPES } from "@/lib/fields";
+import { validateShipment } from "@/lib/validation";
+import { addShipment } from "@/lib/shipments";
 import type { ManualFields, QrFields } from "@/lib/types";
 
 const QR_KEYS = Object.keys(QR_FIELD_LABELS) as (keyof QrFields)[];
@@ -22,17 +24,20 @@ function EntryForm() {
     setM((prev) => ({ ...prev, [k]: v }));
 
   async function submit() {
+    const record = { ...qr, ...m };
+    const errors = validateShipment(record);
+    if (errors.length) {
+      setBadFields(errors);
+      setStatus("error");
+      return;
+    }
     setStatus("saving");
-    const res = await fetch("/api/shipments", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...qr, ...m }),
-    });
-    if (res.ok) {
+    try {
+      await addShipment(record);
+      setBadFields([]);
       setStatus("done");
-    } else {
-      const body = await res.json().catch(() => ({}));
-      setBadFields(body.fields ?? []);
+    } catch {
+      setBadFields([]);
       setStatus("error");
     }
   }
